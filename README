@@ -1,3 +1,8 @@
 Conifer is a popular CNV-calling tool written by Nick Krumm in 2012. 
 
 This repository refactors the Conifer tool written in Python2.7 to Python3. 
+
+Tested on:
+Python 3.8.10
+Table 3.7.0
+
