@@ -1,6 +1,6 @@
-Conifer is a popular CNV-calling tool written by Nick Krumm in 2012. 
+Conifer is a popular CNV-calling tool written by Nick Krumm in 2012 (Krumm et al, Genome Research). Since then, it has continued to be used extensively for calling CNVs from exome sequencing data. However, Conifer was written in python 2.7, which is now deprecated and not supported. Installing Conifer and its dependencies from scratch can be time-consuming. 
 
-This repository refactors the Conifer tool written in Python2.7 to Python3. 
+In this repository, we refactor the Conifer tool written in Python2.7 to Python3 for ease of use. 
 
 Tested on:
 Python 3.8.10
