@@ -95,7 +95,8 @@ def CF_analyze(args):
 		s = '.'.join(f.split('/')[-1].split('.')[0:-1])
 		print("[INIT] Mapping file to sampleID: %s --> %s" % (f, s))
 		samples[s] = f
-	
+	print(samples)	
+
 	#check uniqueness and total # of samples
 	if len(set(samples)) != len(set(rpkm_files)):
 		print('[ERROR] Could not successfully derive sample names from RPKM filenames. There are probably non-unique sample names! Please rename files using <sampleID>.txt format!')
@@ -157,7 +158,7 @@ def CF_analyze(args):
 			sys.exit(0)
 		
 #		chr_probes = filter(lambda i: i["chr"] == chr, probes)
-		print(np.array(map(operator.itemgetter("probeID"),chr_probes)))
+#		print(np.array(map(operator.itemgetter("probeID"),chr_probes)))
 		
 #		probeIDs = np.array(map(operator.itemgetter("probeID"),chr_probes))[probe_mask]
 #		probe_starts = np.array(map(operator.itemgetter("start"),chr_probes))[probe_mask]
@@ -193,11 +194,11 @@ def CF_analyze(args):
 #		print(out_probes)
 		probe_table.append(out_probes)
 		
-		print("[RUNNING: chr%d] Calculating ZRPKM scores..." % chr)
+#		print("[RUNNING: chr%d] Calculating ZRPKM scores..." % chr)
 		rpkm = np.apply_along_axis(cf.zrpkm, 0, rpkm, median[probe_mask], sd[probe_mask])
 		
 		# svd transform
-		print("[RUNNING: chr%d] SVD decomposition..." % chr)
+#		print("[RUNNING: chr%d] SVD decomposition..." % chr)
 		components_removed = int(args.svd)
 		
 		U, S, Vt = np.linalg.svd(rpkm,full_matrices=False)
@@ -214,7 +215,7 @@ def CF_analyze(args):
 		
 		
 		# save to HDF5 file
-		print("[RUNNING: chr%d] Saving SVD-ZRPKM values" % chr)
+#		print("[RUNNING: chr%d] Saving SVD-ZRPKM values" % chr)
 		
 		for i,s in enumerate(samples):
 			out_data = np.empty(num_chr_probes,dtype='u4,f8')
@@ -224,12 +225,21 @@ def CF_analyze(args):
 			sample_tbl.append(out_data)
 	
 	
-#	print "[RUNNING] Saving sampleIDs to file..."
+	print("sample table...")
+	print(len(samples))
+#	print(sample_tbl)
+#	print(cf.sample)
+	print("[RUNNING] Saving sampleIDs to file...")
 	sample_group = h5file_out.create_group("/","samples","samples")
 	sample_table = h5file_out.create_table(sample_group,"samples",cf.sample,"samples")
 	dt = np.dtype([('sampleID',np.str_,100)])
 	out_samples = np.empty(len(samples.keys()),dtype=dt)
-	out_samples['sampleID'] = np.array(samples.keys())
+	print(out_samples)
+	out_samples['sampleID'] = np.array(list(samples.keys()))
+	print(np.array(samples.keys()))
+
+	print(out_samples['sampleID'])
+	print("done!")
 	sample_table.append(out_samples)
 	
 	
@@ -270,7 +280,7 @@ def CF_analyze(args):
 def CF_export(args):
 	try: 
 		h5file_in_fn = str(args.input)
-		h5file_in = openFile(h5file_in_fn, mode='r')
+		h5file_in = open_file(h5file_in_fn, mode='r')
 	except IOError as e: 
 		print('[ERROR] Cannot open CoNIFER input file for reading: ', h5file_in_fn)
 		sys.exit(0)	
@@ -338,7 +348,7 @@ def CF_export(args):
 def CF_call(args):
 	try: 
 		h5file_in_fn = str(args.input)
-		h5file_in = openFile(h5file_in_fn, mode='r')
+		h5file_in = open_file(h5file_in_fn, mode='r')
 	except IOError as e: 
 		print('[ERROR] Cannot open CoNIFER input file for reading: ', h5file_in_fn)
 		sys.exit(0)		
@@ -364,17 +374,18 @@ def CF_call(args):
 	all_calls = []
 	
 	for chr in chrs_to_process:
-#		print '[RUNNING] Now processing chr%s' % chr
+		print('[RUNNING] Now processing chr%s' % chr)
 		data = r.getExonValuesByRegion(chr)
-		
 		#raw_data = copy.copy(data)
 		_ = data.smooth()
 		
 		mean= np.mean(data.rpkm,axis=1)
 		sd =  np.std(data.rpkm,axis=1)
 		
-		for sample in r.getSampleList():
-			sample_data = data.getSample([sample]).flatten()
+#		print(r.getSampleList())
+		for sample in range(0,len(data.samples)):
+#			print(sample)
+			sample_data = data.getSample([data.samples[sample]]).flatten()
 			#sample_raw_data = raw_data.getSample([sample]).flatten()
 			
 			dup_mask = sample_data >= args.threshold
