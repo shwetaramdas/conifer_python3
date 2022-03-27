@@ -383,9 +383,10 @@ def CF_call(args):
 		sd =  np.std(data.rpkm,axis=1)
 		
 #		print(r.getSampleList())
-		for sample in range(0,len(data.samples)):
+		for sample_num in range(0,len(data.samples)):
 #			print(sample)
-			sample_data = data.getSample([data.samples[sample]]).flatten()
+			sample_data = data.getSample([data.samples[sample_num]]).flatten()
+			sample = data.samples[sample_num]
 			#sample_raw_data = raw_data.getSample([sample]).flatten()
 			
 			dup_mask = sample_data >= args.threshold
@@ -440,7 +441,7 @@ def CF_plot(args):
 		from matplotlib.patches import Rectangle
 		_ = locale.setlocale(locale.LC_ALL, '')
 	except:
-#		print "[ERROR] One or more of the required modules for plotting cannot be loaded! Are matplotlib and pylab installed?"
+		print("[ERROR] One or more of the required modules for plotting cannot be loaded! Are matplotlib and pylab installed?")
 		sys.exit(0)
 		
 		
@@ -498,7 +499,7 @@ def CF_plotcalls(args):
 		from matplotlib.lines import Line2D
 		from matplotlib.patches import Rectangle
 	except:
-#		print "[ERROR] One or more of the required modules for plotting cannot be loaded! Are matplotlib and pylab installed?"
+		print("[ERROR] One or more of the required modules for plotting cannot be loaded! Are matplotlib and pylab installed?")
 		sys.exit(0)
 	
 	import locale	

@@ -146,11 +146,11 @@ def plotGenomicCoords(plt, rpkm_data,fontsize=10,rotation=0):
 	import operator
 	import locale
 	exon_set = rpkm_data.exons
-	genomic_coords = np.array(map(operator.itemgetter("start"),exon_set))
+	genomic_coords = np.array(list(map(operator.itemgetter("start"),exon_set)))
 	
-	ticks = range(0,len(exon_set),len(exon_set)/5)
-	
+	ticks = list(range(0,int(len(exon_set)),int(len(exon_set)/5)))
 	ticks[-1] -= 1 # the last tick is going to be off the chart, so we estimate it as the second to last genomic coord.
+
 	labels = [locale.format("%d", genomic_coords[i], grouping=True) for i in ticks if i < len(genomic_coords)]
 	if rotation != 0:
 		ha = "right"
@@ -278,6 +278,7 @@ class rpkm_reader:
 			samples = data_tbl	
 		else:
 			num_samples = len(sampleList)
+#			print(sampleList)
 			samples = [data_tbl._f_get_child("sample_" + s) for s in sampleList]
 		
 		data = np.empty([num_samples,len(table_rows)],dtype=np.float)
