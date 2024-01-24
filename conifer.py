@@ -596,7 +596,7 @@ def CF_bam2RPKM(args):
 	
 	f = pysam.Samfile(args.input[0], "rb" )	
 	
-	if not f._hasIndex():
+	if not f.has_index():
 #		print "[ERROR] No index found for bam file (%s)!\n[ERROR] You must first index the bam file and include the .bai file in the same directory as the bam file!" % args.input[0]
 		sys.exit(0)
     
